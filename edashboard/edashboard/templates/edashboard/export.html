@@ -19,13 +19,15 @@
         <div id="error-display">
 			  </div>
         <h1 id="downloadrep">Download Reports</h1>
+        <form id="form-info">
         <div class="greyell" id="reportrange" style="cursor: pointer; padding: 5px 10px;">
-            <i class="fa fa-calendar"></i>&nbsp;
-            <span></span> <i class="fa fa-caret-down"></i>
+          <i class="fa fa-calendar"></i>&nbsp;
+          <span></span> <i class="fa fa-caret-down"></i>
         </div>
-        {% include "edashboard/addbuilding.html" %}
-        <button id="graphdata" onClick="checkFields()">Graph Data</button>
+          {% include "edashboard/addbuilding.html" %}
+          <button id="graphdata" onClick="checkFields()" type="submit">Graph Data</button>
       </div>
+    </form>
       <div class="graph-cont" style=" display:inline-block;">
         <div class="chart-container" style="text-align: -webkit-center;">
           <canvas id="line-chart" width="800" height="450"></canvas>
@@ -34,6 +36,7 @@
       </div>
     </div>
   </body>
+<script src="myscripts.js"></script>
 <script>
 /*
 //READING FROM .CSV CODE ****IN PROGRESS*****
@@ -50,11 +53,12 @@ function processData(allText) {
 
 }*/
 //TIME RANGE CODE
+
 $(function() {
     var start = moment().subtract(29, 'days');
     var end = moment();
     function cb(start, end) {
-        $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        $('#reportrange span').html(start.format('MMMM D, YYYY h:mm a') + ' - ' + end.format('MMMM D, YYYY h:mm a'));
     }
     $('#reportrange').daterangepicker({
         startDate: start,
@@ -71,16 +75,82 @@ $(function() {
     }, cb);
     cb(start, end);
 });
+  var time = document.getElementById("reportrange").getElementsByTagName('span')[0];
+  time.setAttribute("id","stringtime");
+  time.setAttribute("name","stringtime");
+
+  $("#form-info").submit(function(event) {
+    var timestr = $("span#stringtime").text();
+    var buildingname = $('#buildingsearch').val();
+    var sensor = $('#select-selected-sens').clone().children().remove().end().text();
+    var util = $('#select-selected-util').clone().children().remove().end().text();
+    var myEvent = {'building': buildingname,'time': timestr, 'util': util, 'sensor': sensor};
+    $.ajax({
+        url: "/export/",
+        cache: 'false',
+        type: 'POST',
+        headers: {'X-CSRFToken': '{{ csrf_token }}'},
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(myEvent),
+        crossDomain: false,
+         error: function(){
+                        alert("Boooo");
+                    },
+          });
+          myChart.destroy();
+          myChart= new Chart(document.getElementById("line-chart"), {
+            type: 'line',
+            data: {
+              labels: [{% for data in date %}
+                            {{ data }},
+                          {% endfor %}],
+              fillOpacity: .3,
+              datasets: [{
+                  data: [{% for data in usage %}
+                                {{ data }},
+                                {% endfor %}],
+                  label: "Week 1",
+                  borderColor: "#1f61a8",
+                  fill: origin,
+                  backgroundColor: "rgba(31,97,168,.3)",
+                },
+              ]
+            },
+            options: {
+              responsive: false,
+              title: {
+                display: true,
+                text: "SAS Building Electricity usage",
+              },
+              scales: {
+              xAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Time'
+                }
+              }],
+              yAxes: [{
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Electricity (kWh)'
+                }
+              }]
+            }
+            }
+          }
+        );
+      });
 // GRAPH CODE
-  new Chart(document.getElementById("line-chart"), {
+  var myChart = new Chart(document.getElementById("line-chart"), {
     type: 'line',
     data: {
-      labels: [{% for data in db_id %}
+      labels: [{% for data in date %}
                     {{ data }},
                   {% endfor %}],
       fillOpacity: .3,
       datasets: [{
-          data: [{% for data in db_data %}
+          data: [{% for data in usage %}
                         {{ data }},
                         {% endfor %}],
           label: "Week 1",

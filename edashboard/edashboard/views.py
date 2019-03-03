@@ -1,13 +1,22 @@
 from django.shortcuts import render
-
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from django.template import Template, Context
 from django import template
-from edashboard.models import Demo
+from edashboard.clean import *
+from edashboard.GetBuilding import *
+from edashboard.models import ExportBuilding,Demo
+from django.views import View
+from edashboard.forms import ExportForm
+from django.http import JsonResponse
+import json
+import time
+
 register = template.Library()
 
 
@@ -20,16 +29,54 @@ def building_view(request):
 def compare_view(request):
     return render(request, 'edashboard/compare.html')
 
-def export_view(request):
-    db_data = Demo.objects.all().values_list('value', flat=True)
-    db_date = Demo.objects.all().values_list('date', flat=True)
-    db_id = Demo.objects.all().values_list('id', flat=True)
-    return render(request, 'edashboard/export.html',{'db_data':db_data, 'db_id':db_id})
+class ExportView(View):
+    date=[]
+    value=[]
+    def get(self, request):
+        date=[]
+        value=[]
+        return render(request, 'edashboard/export.html',{'db_data':0, 'db_id':0})
+
+    def post(self, request):
+        if request.is_ajax():
+            body_unicode = request.body.decode('utf-8')
+            body = json.loads(body_unicode)
+            #Gets start and end times
+            timestr = body['time']
+            times = timestr.split(" - ")
+            #Creates our variables needed for graphing
+            timestart = getTimes(times[0])
+            timeend = getTimes(times[1])
+            building = body['building']
+            util = body['util']
+            sensor = body['sensor']
+            usage = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('usage')
+            date = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('date')
+            #usage = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('usage','date')
+            for i in date:
+                if (i.get('date') is not None):
+                    i=(str(i.get('date')).split("+")[0]).encode('utf-8')
+        return render(request, 'edashboard/export.html',{'date':date, 'usage':usage})
+
+def get_data(request):
+    date = "Tues"
+    usage = 10
+    return JsonResponse({'data': usage,'date':date})
+
+def validate_username(request):
+    username = request.GET.get('username', None)
+    data = {
+        'is_taken': User.objects.filter(username__iexact=username).exists()
+    }
+    if data['is_taken']:
+        data['error_message'] = 'A user with this username already exists.'
+    return JsonResponse(data)
 
 def compare_view(request):
     db_data = Demo.objects.all().values_list('value', flat=True)
     db_date = Demo.objects.all().values_list('date', flat=True)
     db_id = Demo.objects.all().values_list('id', flat=True)
+    print(db_id)
     return render(request, 'edashboard/compare.html',{'db_data':db_data, 'db_id':db_id})
 
 def help_view(request):
