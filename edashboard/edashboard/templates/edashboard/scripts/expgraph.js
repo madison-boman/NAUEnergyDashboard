@@ -1,5 +1,5 @@
 {% load staticfiles %}
-
+console.log('{{ date }}');
   var myChart = new Chart(document.getElementById("line-chart"), {
     type: 'line',
     data: {

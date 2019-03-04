@@ -1,5 +1,5 @@
 {% load staticfiles %}
-var input2 = document.getElementById("buildingsearch expcompsearch");
+var input2 = document.getElementById("buildingsearchexpcompsearch");
 var buildings = {{ buildlist|safe }} ;
 var results;
 
@@ -43,7 +43,7 @@ input2.onkeyup = function(e){
 }
 function FillInput(listid){
   listName = document.getElementById(listid).innerHTML;
-  document.getElementById("buildingsearch expcompsearch").value = listName;
+  document.getElementById("buildingsearchexpcompsearch").value = listName;
   document.getElementById("autocomplete-results2").innerHTML = ''
   document.getElementById("autocomplete-results2").style.backgroundColor = 'white';
   return 0;

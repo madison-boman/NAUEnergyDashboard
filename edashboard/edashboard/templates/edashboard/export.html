@@ -49,7 +49,8 @@
 
   $("#form-info").submit(function(event) {
     var timestr = $("span#stringtime").text();
-    var buildingname = $('#buildingsearch').val();
+    var buildingname = $('#buildingsearchexpcompsearch').val();
+    console.log(buildingname);
     var sensor = $('#select-selected-sens').clone().children().remove().end().text();
     var util = $('#select-selected-util').clone().children().remove().end().text();
     var myEvent = {'building': buildingname,'time': timestr, 'util': util, 'sensor': sensor};

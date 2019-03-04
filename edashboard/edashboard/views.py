@@ -43,6 +43,7 @@ class ExportView(View):
 
     def post(self, request):
         if request.is_ajax():
+            print("Yippeee")
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
             #Gets start and end times
@@ -54,13 +55,20 @@ class ExportView(View):
             building = body['building']
             util = body['util']
             sensor = body['sensor']
+            buildings = BuildingSearch.getBuildingString()
             usage = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('usage')
+            usages=[]
+            for i in usage:
+                usages.append(i.get('usage'))
             date = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('date')
             #usage = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('usage','date')
+            dates=[]
             for i in date:
                 if (i.get('date') is not None):
-                    i=(str(i.get('date')).split("+")[0]).encode('utf-8')
-        return render(request, 'edashboard/export.html',{'date':date, 'usage':usage})
+                    dates.append((str(i.get('date')).split("+")[0]))
+            print(dates)
+            print(usages)
+        return render(request, 'edashboard/export.html',{'date':dates, 'usage':usages,'buildlist': buildings})
 
 def get_data(request):
     date = "Tues"

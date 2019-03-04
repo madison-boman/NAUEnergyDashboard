@@ -53,6 +53,7 @@
   });
 
   var input = document.getElementById('buildingsearch header-search');
+  var flag = "building";
   var buildings = {{ buildlist|safe }} ;
   var results;
 
@@ -69,6 +70,13 @@
   // events
   input.onkeyup = function(e) {
     input_val = this.value; // updates the variable on each ocurrence
+    console.log(Number.isInteger(input_val));
+    if(Number.isInteger(input_val)){
+      flag = "sensor";
+    }
+    else{
+      flag = "building";
+    }
 
     if (input_val.length > 0) {
       var build_to_show = [];
@@ -100,6 +108,12 @@
     document.getElementById("buildingsearch header-search").value = listName;
     document.getElementById("autocomplete-results").innerHTML = ''
     document.getElementById("autocomplete-results").style.backgroundColor = 'white';
+    if(flag == "building"){
+      window.location.href = "{% url 'edashboard:building' %}";
+    }
+    else{
+      window.location.href = "{% url 'edashboard:export' %}";
+    }
     return 0;
   }
 
