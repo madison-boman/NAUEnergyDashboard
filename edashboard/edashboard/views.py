@@ -10,7 +10,7 @@ from django.template import Template, Context
 from django import template
 from edashboard.clean import *
 from edashboard.GetBuilding import *
-from edashboard.models import ExportBuilding,Demo
+from edashboard.models import *
 from django.views import View
 from edashboard.forms import ExportForm
 from django.http import JsonResponse
@@ -21,21 +21,25 @@ register = template.Library()
 
 
 def index(request):
-    return render(request, 'edashboard/index.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/index.html',{'buildlist': buildings})
 
 def building_view(request):
-    return render(request, 'edashboard/building.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/building.html',{'buildlist': buildings})
 
 def compare_view(request):
-    return render(request, 'edashboard/compare.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/compare.html',{'buildlist': buildings})
 
 class ExportView(View):
-    date=[]
-    value=[]
     def get(self, request):
-        date=[]
-        value=[]
-        return render(request, 'edashboard/export.html',{'db_data':0, 'db_id':0})
+        building = BuildingSearch()
+        buildings = BuildingSearch.getBuildingString()
+        db_data = Demo.objects.all().values_list('value', flat=True)
+        db_date = Demo.objects.all().values_list('date', flat=True)
+        db_id = Demo.objects.all().values_list('id', flat=True)
+        return render(request, 'edashboard/export.html',{'usage':db_data, 'date':db_id, 'buildlist': buildings})
 
     def post(self, request):
         if request.is_ajax():
@@ -76,20 +80,25 @@ def compare_view(request):
     db_data = Demo.objects.all().values_list('value', flat=True)
     db_date = Demo.objects.all().values_list('date', flat=True)
     db_id = Demo.objects.all().values_list('id', flat=True)
+    buildings = BuildingSearch.getBuildingString()
     print(db_id)
-    return render(request, 'edashboard/compare.html',{'db_data':db_data, 'db_id':db_id})
+    return render(request, 'edashboard/compare.html',{'db_data':db_data, 'db_id':db_id, 'buildlist': buildings})
 
 def help_view(request):
-    return render(request, 'edashboard/help.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/help.html',{'buildlist': buildings})
 
 def construction_view(request):
-    return render(request, 'edashboard/construction.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/construction.html',{'buildlist': buildings})
 
 def login_view(request):
-    return render(request, 'edashboard/login.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/login.html',{'buildlist': buildings})
 
 def admin_view(request):
-    return render(request, 'edashboard/admin.html')
+    buildings = BuildingSearch.getBuildingString()
+    return render(request, 'edashboard/admin.html',{'buildlist': buildings})
 '''
 def data(request):
     db_data = Demo.objects.all().values_list('value', flat=True)
