@@ -22,8 +22,8 @@ from django.conf.urls.static import static
 
 app_name = 'edashboard'
 urlpatterns = [
-    path('edashboard/', views.index, name='index'),
-    path('edashboard/home/', views.construction_view, name='index'),
+    path('home/', views.index, name='index'),
+    path('/', views.construction_view, name='index'),
     path('building/', views.building_view, name='building'),
     path('compare/', views.compare_view, name='compare'),
     path('export/', ExportView.as_view(), name='export'),
