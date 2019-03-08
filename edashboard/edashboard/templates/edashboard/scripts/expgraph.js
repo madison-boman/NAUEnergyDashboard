@@ -1,15 +1,14 @@
 {% load staticfiles %}
-console.log('{{ date }}');
   var myChart = new Chart(document.getElementById("line-chart"), {
     type: 'line',
     data: {
       labels: [{% for data in date %}
-                    {{ data }},
+                    "{{ data|safe}}",
                   {% endfor %}],
       fillOpacity: .3,
       datasets: [{
           data: [{% for data in usage %}
-                        {{ data }},
+                        {{ data|safe }},
                         {% endfor %}],
           label: "Week 1",
           borderColor: "#1f61a8",

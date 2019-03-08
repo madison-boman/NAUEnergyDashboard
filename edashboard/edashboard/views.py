@@ -33,17 +33,18 @@ def compare_view(request):
     return render(request, 'edashboard/compare.html',{'buildlist': buildings})
 
 class ExportView(View):
+    dates=[]
+    usages=[]
+
     def get(self, request):
-        building = BuildingSearch()
         buildings = BuildingSearch.getBuildingString()
-        db_data = Demo.objects.all().values_list('value', flat=True)
-        db_date = Demo.objects.all().values_list('date', flat=True)
-        db_id = Demo.objects.all().values_list('id', flat=True)
-        return render(request, 'edashboard/export.html',{'usage':db_data, 'date':db_id, 'buildlist': buildings})
+        return render(request, 'edashboard/export.html',{'date':self.dates, 'usage':self.usages,'buildlist': buildings})
 
     def post(self, request):
         if request.is_ajax():
-            print("Yippeee")
+            if(len(self.dates) != 0):
+                self.dates.clear()
+                self.usages.clear()
             body_unicode = request.body.decode('utf-8')
             body = json.loads(body_unicode)
             #Gets start and end times
@@ -57,23 +58,45 @@ class ExportView(View):
             sensor = body['sensor']
             buildings = BuildingSearch.getBuildingString()
             usage = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('usage')
-            usages=[]
             for i in usage:
-                usages.append(i.get('usage'))
+                self.usages.append(i.get('usage'))
             date = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('date')
             #usage = ExportBuilding.objects.filter(date__gte=timestart, date__lte=timeend).values('usage','date')
-            dates=[]
             for i in date:
                 if (i.get('date') is not None):
-                    dates.append((str(i.get('date')).split("+")[0]))
-            print(dates)
-            print(usages)
-        return render(request, 'edashboard/export.html',{'date':dates, 'usage':usages,'buildlist': buildings})
+                    self.dates.append((str(i.get('date')).split("+")[0]))
+        return render(request, 'edashboard/export.html',{'date':json.dumps(self.dates), 'usage':json.dumps(self.usages),'buildlist': buildings})
 
 def get_data(request):
     date = "Tues"
     usage = 10
     return JsonResponse({'data': usage,'date':date})
+
+
+def login(request):
+   username = 'not logged in'
+   if request.method == 'POST':
+      MyLoginForm = LoginForm(request.POST)
+      if MyLoginForm.is_valid():
+         username = MyLoginForm.cleaned_data['username']
+         request.session['username'] = username
+      else:
+         MyLoginForm = LoginForm()
+   return render(request, 'index.html', {"username" : username})
+
+def formView(request):
+   if request.session.has_key('username'):
+      username = request.session['username']
+      return render(request, 'index.html', {"username" : username})
+   else:
+      return render(request, 'login.html', {})
+
+def logout(request):
+   try:
+      del request.session['username']
+   except:
+      pass
+   return HttpResponse("<strong>You are logged out.</strong>")
 
 def validate_username(request):
     username = request.GET.get('username', None)

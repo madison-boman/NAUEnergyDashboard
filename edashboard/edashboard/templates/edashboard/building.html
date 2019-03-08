@@ -33,8 +33,8 @@
           <div id="Leftgraph" style="text-align: center;">
             <h2 style="text-align:center;">Historical Data</h2>
           <div id="switches">
-            <button id="hour" onclick="chgColor('btu')" style="width:50%">Hourly</button>
-            <button id="15m" onclick="chgColor('kw')" style="width:50%">15-Min</button>
+            <button id="hour" onclick="chgColor('hour')" style="width:50%">Hourly</button>
+            <button id="15m" onclick="chgColor('15m')" style="width:50%">15-Min</button>
           </div>
           <div id="selectsens" class="custom-select" style="width:200px; margin:auto;">
             <li class="dropdown-toggle" style="display:none;">Sensor</li>
@@ -56,23 +56,33 @@
             {% include "edashboard/scripts/expgraph.js" %}
             {% include "edashboard/scripts/sidebar.js" %}
             {% include "edashboard/scripts/donutgraph.js" %}
-
+            document.getElementById("hour").style.backgroundColor = "rgb(255, 204, 1)";
             // Toggles button color and the labels
-            function chgColor(id) {
+            function chgColor(id){
+              console.log(id);
               // Changes colors of buttons
-              //Converts to BTUs
-              if(document.getElementById("15m").style.backgroundColor == "rgb(255, 204, 1)"){
-                document.getElementById("15m").style.backgroundColor = "#e3e3e3";
-              }
-              // Converts to kWh
-              else if(document.getElementById("hour").style.backgroundColor == "rgb(255, 204, 1)"){
+              document.getElementById(id).style.backgroundColor = "rgb(255, 204, 1)";
+              if(id == "15m"){
                 document.getElementById("hour").style.backgroundColor = "#e3e3e3";
               }
+              else if(id == "hour"){
+                document.getElementById("15m").style.backgroundColor = "#e3e3e3";
+              }
               // Changes the button to be highlighted
-              document.getElementById(id).style.backgroundColor = "#ffcc01";
               chgLabels(id);
             }
+
             </script>
+          </div>
+          <div id="stats">
+            <div id="innerstats" class="greyell">
+              <h1 style= "color:#003467" >Statistics</h1>
+              <div id="statdata">
+              <h4><b>Mean:</b> Need Data</h4>
+              <h4><b>Median:</b> Need Data</h4>
+              <h4><b>Mode:</b> Need Data</h4>
+            </div>
+            </div>
           </div>
         </div>
       </div>

@@ -5,27 +5,42 @@
     <img id="logo" src={% static '/edashboard/images/logo.png' %} style="margin-top: 4%; max-height:inherit; width:auto;">
   </div>
   <div id="links" style="float: left; font-size: 25px;" >
-    <a href="{% url 'edashboard:index' %}" style="padding: 17px 17px;">Home</a>
-    <a href="{% url 'edashboard:export' %}" style="padding: 17px 17px;">Export</a>
+    <a href="{% url 'index' %}" style="padding: 17px 17px;">Home</a>
+    <a href="{% url 'export' %}" style="padding: 17px 17px;">Export</a>
     <div id="dd" class="dropdown-content">
       <a href="#" style="padding: 17px 17px;">Building</a>
-      <ul class="dropdown" style="    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+      <ul class="dropdown" style="max-height: 600px;overflow: scroll; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
         <li class="links"><input type="text" id="buildingsearch header-search" class="search" placeholder="Search for Building..." style="color:black;font-size: 20px;border: none;padding: 10px;">
-        <ul id="autocomplete-results"></ul></li>
-        <li class="links"><a href="#">Link 1</a></li>
-        <li class="links"><a href="#">Link 2</a></li>
-        <li class="links"><a href="#">Link 3</a></li>
+        <ul id="autocomplete-results" class="sidemenu"></ul></li>
+        {% include "edashboard/sidebar.html" %}
       </ul>
     </div>
-    <a href="{% url 'edashboard:compare' %}" style="padding: 17px 17px;">Comparison</a>
+    <a href="{% url 'compare' %}" style="padding: 17px 17px;">Comparison</a>
   </div>
   <div id="settings">
-    <a href="{% url 'edashboard:help' %}">Help</a>
-    <a href="{% url 'edashboard:adminsite' %}">Admin</a>
-    <a href="{% url 'edashboard:index' %}">Logout</a>
+    <a href="{% url 'help' %}">Help</a>
+    <a href="{% url 'adminsite' %}">Admin</a>
+    <a href="{% url 'index' %}">Logout</a>
     <span class="clear"></span>
   </div>
   <script>
+    $('.dropdown li > #numbersub').parent().click(function() {
+    var submenu = $(this).children('#numbersub');
+    if ( $(submenu).is(':hidden') ) {
+      $(submenu).slideDown(200);
+    } else {
+      $(submenu).slideUp(200);
+    }
+    });
+
+    $('.dropdown li > #namesub').parent().click(function() {
+    var submenu = $(this).children('#namesub');
+    if ( $(submenu).is(':hidden') ) {
+      $(submenu).slideDown(200);
+    } else {
+      $(submenu).slideUp(200);
+    }
+    });
     function DropDown(el) {
     this.dd = el;
     this.initEvents();
@@ -45,8 +60,13 @@
   event.stopPropagation();
 });
 
+  $('.links').on('click', function(e) {
+    event.stopPropagation();
+  });
+
   $(function() {
     var dd = new DropDown( $('#dd') );
+    var dl = new DropDown( $('.links') );
   	$(document).click(function() {
   	  $('dropdown-content').removeClass('active');
   	});
@@ -70,7 +90,7 @@
   // events
   input.onkeyup = function(e) {
     input_val = this.value; // updates the variable on each ocurrence
-    console.log(Number.isInteger(input_val));
+
     if(Number.isInteger(input_val)){
       flag = "sensor";
     }
@@ -109,10 +129,10 @@
     document.getElementById("autocomplete-results").innerHTML = ''
     document.getElementById("autocomplete-results").style.backgroundColor = 'white';
     if(flag == "building"){
-      window.location.href = "{% url 'edashboard:building' %}";
+      window.location.href = "{% url 'building' %}";
     }
     else{
-      window.location.href = "{% url 'edashboard:export' %}";
+      window.location.href = "{% url 'export' %}";
     }
     return 0;
   }

@@ -52,6 +52,11 @@ class BuildingSearch(models.Model):
         f.close()
         return buildings
 
+class LoginForm(models.Model):
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+
+
 
 class ExportBuilding(models.Model):
     date = models.DateTimeField()

@@ -60,7 +60,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.core.context_processors.request',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -127,7 +126,4 @@ MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR,EDASH_PATH,MEDIA_URL)
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR,EDASH_PATH,"/static/")
-STATICFILES_DIRS = [
-    "/edashboard/edashboard/static/",
-]
+STATIC_ROOT = '/edashboard/edashboard/static/'

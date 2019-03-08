@@ -146,11 +146,34 @@ img#logo{
   height: inherit;
   opacity: 1;
 }
+li.links a{
+  border-bottom: 3px solid #ffcc01;
+}
 #namesub {
   display: none;
+  overflow: scroll;
+  padding: 5%;
 }
 #numbersub {
   display: none;
+  overflow: scroll;
+  padding: 5%;
+}
+#namesub li{
+  background-color: white;
+  font-size: 20px;
+  margin: 2%;
+}
+#numbersub li{
+  margin: 2%;
+  background-color: white;
+  font-size: 20px;
+}
+#namesub li:hover{
+  background-color: rgba(0, 0, 0, 0.1);
+}
+#numbersub li:hover{
+  background-color: rgba(0, 0, 0, 0.1);
 }
 #container{
   width: 100%;
@@ -686,3 +709,25 @@ div#Topnav.topnav li:hover a {
 }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
+#namesub li a{
+  background-color: white
+  border:none;
+}
+#numbersub li a{
+  background-color: white
+  border:none;
+}
+#stats{
+  width:25%;
+  padding: 5%;
+  text-align: center;
+}
+#statdata{
+  text-align: center;
+}
+#statdata h4{
+  font-weight: normal;
+}
+#innerstats{
+  padding: 5%;
+}
